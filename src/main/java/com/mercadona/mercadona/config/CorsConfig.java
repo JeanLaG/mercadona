@@ -17,7 +17,7 @@ public class CorsConfig {
                         // Autoriser les méthodes HTTP
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         // Limiter l'origine à http://localhost:4200 pour éviter les problèmes de CORS
-                        .allowedOrigins("http://localhost:4200")  // Autoriser les requêtes venant de localhost:4200
+                        .allowedOrigins("https://unrivaled-douhua-de2908.netlify.app/")  // Autoriser les requêtes venant de localhost:4200
 
                         // Autoriser tous les headers nécessaires
                         .allowedHeaders("*")
