@@ -5,10 +5,15 @@ import com.mercadona.mercadona.entity.Product;
 import com.mercadona.mercadona.service.FileService;
 import com.mercadona.mercadona.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -40,6 +45,23 @@ public class ProductController {
         return ResponseEntity.ok(createdProduct);
     }
 
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("/tmp/images", filename);
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not read the file!", e);
+        }
+    }
+
     @PutMapping("/auth/api/products/promotion/{id}")
     public ResponseEntity<Product> addPromotion(
             @PathVariable Long id,
@@ -52,7 +74,6 @@ public class ProductController {
         );
         return ResponseEntity.ok(updatedProduct);
     }
-    
 
     @GetMapping("/auth/api/products/all")
     public ResponseEntity<List<Product>> getAllProducts() {

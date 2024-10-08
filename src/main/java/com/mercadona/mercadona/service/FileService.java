@@ -13,16 +13,23 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private final String uploadDir = "upload/images";
+    private final String uploadDir = "/tmp/images";
 
     public String saveImage(MultipartFile imageFile) {
         try {
+            // Créer le répertoire s'il n'existe pas
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
             String filename = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, filename);
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return "/images/" + filename;  // Update as per your frontend path
+            return "/images/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("Could not store the image", e);
         }
     }
 }
+
