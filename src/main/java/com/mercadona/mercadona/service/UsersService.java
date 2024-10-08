@@ -27,30 +27,42 @@ public class UsersService {
     private PasswordEncoder passwordEncoder;
 
 
-    public ReqRes register(ReqRes registrationRequest){
+    public ReqRes register(ReqRes registrationRequest) {
         ReqRes resp = new ReqRes();
-
+        
         try {
+            // Vérifier si l'email existe déjà
+            Optional<User> existingUser = usersRepo.findByEmail(registrationRequest.getEmail());
+            if (existingUser.isPresent()) {
+                // Retourner une erreur si l'email est déjà utilisé
+                resp.setStatusCode(400);
+                resp.setMessage("Email already exists");
+                return resp;
+            }
+    
+            // Si l'email n'existe pas, procéder à l'enregistrement de l'utilisateur
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
             user.setNom(registrationRequest.getNom());
             user.setRole(registrationRequest.getRole());
             user.setPrenom(registrationRequest.getPrenom());
             user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+    
             User usersResult = usersRepo.save(user);
-            if (usersResult.getId()>0) {
-                resp.setUser((usersResult));
+            if (usersResult.getId() > 0) {
+                resp.setUser(usersResult);
                 resp.setMessage("User Saved Successfully");
                 resp.setStatusCode(200);
             }
-
-        }catch (Exception e){
+    
+        } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
+    
         return resp;
     }
-
+    
 
     public ReqRes login(ReqRes loginRequest){
         ReqRes response = new ReqRes();
