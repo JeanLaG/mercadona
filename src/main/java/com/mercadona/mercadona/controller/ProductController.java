@@ -52,8 +52,7 @@ public class ProductController {
         );
         return ResponseEntity.ok(updatedProduct);
     }
-
-
+    
 
     @GetMapping("/auth/api/products/all")
     public ResponseEntity<List<Product>> getAllProducts() {
