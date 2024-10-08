@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private final String uploadDir = "src/main/resources/static/images";
+    private final String uploadDir = "upload/images";
 
     public String saveImage(MultipartFile imageFile) {
         try {
